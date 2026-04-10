@@ -1,0 +1,48 @@
+
+stock_correlation_H_volume.m:
+
+m = 1;
+s = [];
+sse = [];
+slope = [];
+slopes = []; %To clear all variables from previous run
+rsquare = [];
+rsquares = [];
+fractal_dimension = [];
+fractal_dimensions = [];
+avg_volume = [];
+avg_volumes = [];
+for i = 1:length(stocks)
+if(length(stocks(i).Close)<1000) %Condition to check considerable number of data points
+continue;
+end
+z = stocks(i).Close;
+y = flipud(z); %To reverse the order of prices from
+
+if (min(y)==max(y))
+continue;
+end
+
+max_k = round(0.75*length(y)); %To limit the size of k
+[slope(i),rsquare(i),s(i)] = find_h(y, max_k); %To estimate slope or 'h' parameter
+avg_volume(i) = mean(abs(stocks(i).Volume));
+fractal_dimension(i) = 2 - slope(i);
+if rsquare(i) < 0.9 %To select stocks that best fit the fractal model
+continue;
+end
+
+if (isnan(slope(i))) %To check for NAN values
+continue;
+end
+
+slopes(m) = slope(i);
+sse(m) = s(i);
+fractal_dimensions(m) = 2-slopes(m);
+rsquares(m) = rsquare(i);
+avg_volumes(m) = mean(abs(stocks(i).Volume));
+m = m+1;
+end
+
+%To caculate the Pearson Coefficient and p-value
+[pearson_corr, p_value] = corr(fractal_dimensions',avg_volumes')
+plot(fractal_dimensions',avg_volumes','.') %Scatter plot

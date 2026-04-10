@@ -1,0 +1,19 @@
+
+find_h.m
+function [m,r,s] = find_h(y,max_k)
+assert(max_k>=1); %To assert that max_k is always > 1
+assert(max_k<=length(y)); %To assert that max_k is less than sample size
+assert(isvector(y)); %To assert that y is existent variable
+z = log(y);
+correlogram = zeros(1,max_k);
+%To find the mean of the absolute difference of the price records with
+%time interval k
+for k=1:max_k
+correlogram(k) = mean(abs(z((k+1):end)-z(1:(end-k))));
+end
+
+x = log(1:max_k);
+assert(all(correlogram~=0)); %To assert no NAN values are stored
+log_correlogram = log(correlogram);
+[m,r,s] = linear_fit(x,log_correlogram); %Invoke function to calculate 'hurst' parameter
+

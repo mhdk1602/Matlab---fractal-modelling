@@ -1,0 +1,35 @@
+linear_fit.m
+
+function [a, rsq, sse]=linear_fit(X, Y)
+s_x=0; %(s_x is a variable for sum of x-values)
+s_y=0; %(s_y is a variable for sum of y-values)
+s_xy=0; %(s_xy is a variable for sum of products of x and y-values)
+s_x_sq=0; %(s_x_sq is a variable for sum of squares of x-values)
+s_y_sq=0; %(s_y_sq is a variable for sum of squares of y-values)
+m=size(X, 2); %(m is the number of x and y values)
+%Loop to find the sum of residual squares
+for i=1:m
+s_x=s_x+X(i);
+s_y=s_y+Y(i);
+s_x_sq=s_x_sq+X(i)^2;
+s_y_sq=s_y_sq+Y(i)^2;
+s_xy=s_xy+X(i)*Y(i);
+end
+
+a=(m*s_xy-s_x*s_y)/(m*s_x_sq-s_x^2); %Calculating the slope of the best fit line
+b=(s_x_sq*s_y-s_xy*s_x)/(m*s_x_sq-s_x^2); %Calculating the y-intercept.
+yresid = zeros(1,length(Y));
+70
+y = zeros(1,length(Y));
+
+for j=1:m
+y(j) = a*X(j)+b;
+yresid(j) = Y(j)- y(j);
+end
+
+sse = 0;
+sstot = 0;
+rsq = 0;
+sse = sum(yresid.^2); %Calculating the sum of squared errors
+sstot = (length(Y)-1) * var(Y);
+rsq = 1 - sse/sstot;
