@@ -1,6 +1,10 @@
 # Fractal Price-Volume Correlation
 
+[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://fractal-pv.streamlit.app)
+
 Fractal analysis of the relationship between stock price dynamics and trading volume using Hurst exponents and multifractal detrended fluctuation analysis (MFDFA).
+
+**[Launch the interactive explorer →](https://fractal-pv.streamlit.app)**
 
 ## The Question
 
@@ -28,9 +32,21 @@ python -c "from fractal_pv.data import fetch_universe, SP500_SAMPLE; fetch_unive
 pytest
 ```
 
+## Interactive Dashboard
+
+The [Streamlit app](https://fractal-pv.streamlit.app) lets you explore fractal dynamics for any ticker:
+
+- **Price & Volume** — time series with full-sample Hurst estimates
+- **Rolling Hurst** — H(|returns|) and H(volume) over time with spread analysis
+- **Cross-Correlation** — scatter of rolling Hurst values with Pearson/Spearman stats
+- **Method Comparison** — DFA vs R/S with literature reference values
+
+No installation required. Just open the link.
+
 ## Project Structure
 
 ```
+app.py                 # Streamlit dashboard
 src/fractal_pv/
   data.py            # Data fetching + parquet caching
   hurst.py           # Hurst estimation wrappers + CI    (Phase 2)
