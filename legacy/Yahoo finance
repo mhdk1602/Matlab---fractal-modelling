@@ -1,0 +1,44 @@
+%URL for downloading stock data from Yahoo Finance
+%http://ichart.finance.yahoo.com/table.csv?s=”TICKR_SYMBOL”&a=”START_MONTH”&b=”START_DAY”&c=”START_YEAR”&d=”END_MONTH”&e=”END_DAY”&f=”END_YEAR”&g=d&ignore=.csv
+
+%To extract stock data from Yahoo Finance
+
+function stocks = stock_price_data(dateBeg, dateEnd, tickSym)
+stock_data = struct([]); % initialize data structure
+start_day = dateBeg(1:2); % beginning day
+start_month = sprintf('%02d',str2double(dateBeg(3:4))-1);
+% beginning month
+start_year = dateBeg(5:8); % start year
+end_day = dateEnd(1:2); %end day
+end_month = sprintf('%02d',str2double(dateEnd(3:4))-1);
+% ending month
+end_year = dateEnd(5:8); % end year
+% frequency of downloading stock data
+f = 'd'; % default is daily
+x = waitbar(0, 'Please Wait...'); % create waitbar
+y = 1; % increment stock index position
+% run iteration for each ticker and retrieve stock data
+% update waitbar to display current ticker
+waitbar((1-1)/length(tickSym),x,sprint('%s %s %s%0.2f%s', ...
+'Extracting stock data for',tickSym,'(',(1-1)*100/length(tickSym),'%)'))
+[t, stats] = urlread(strcat('http://ichart.finance.yahoo.com/table.csv?s='...tickSym,'&a=',start_month,'&b=',start_day,'&c=',start_year,'&d=',end_month,'&e=',end_day,'&f=',...end_year,'&g=',f,'&ignore=.csv'));
+if (stats)
+% segregate data
+[date, open, h, l, close, vol, a_close] = strread(temp(43:end),'%s%s%s%s%s%s%s',',');
+stock_data(idx).Ticker = tickSym; %ticker symbol
+stock_data(y).Date = date; % extract date
+stock_data(y).Open = str2double(open);
+% extract open price
+stock_data(y).High = str2double(h); % extract high price
+stock_data(y).Low = str2double(l); % extract low price
+stock_data(y).Close = str2double(close);
+% extract close price
+stock_data(y).Vol = str2double(vol); % to extract volume
+stock_data(y).Adj_Close = str2double(a_close);
+% to extract adjustied close data
+y = y + 1; % increment stock index
+end
+clear date open h l close vol a_close temp status
+% update waitbar
+waitbar(1/length(tickSym),x)
+close(x) % close waitbar
